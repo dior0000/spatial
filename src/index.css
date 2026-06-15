@@ -1,0 +1,249 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Design tokens ─────────────────────────────────────────────────────────── */
+:root {
+  --bg: #06080d;
+  --surface: #0c111a;
+  --surface-2: #111927;
+  --line: rgba(255, 255, 255, 0.07);
+  --line-strong: rgba(255, 255, 255, 0.12);
+  --teal: #1fe3c2;
+  --teal-soft: rgba(31, 227, 194, 0.14);
+  --teal-line: rgba(31, 227, 194, 0.3);
+  --magenta: #ff496b;
+  --magenta-soft: rgba(255, 73, 107, 0.12);
+  --text: #eaf0f5;
+  --text-dim: #8c97a6;
+  --text-mute: #535e6d;
+}
+
+/* ── Base ───────────────────────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: 'Manrope', sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  min-height: 100dvh;
+}
+
+/* Coordinate graticule texture — on a fixed pseudo-element so the mask
+   only clips the grid, never the page content */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-color: var(--bg);
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 64px 64px;
+  -webkit-mask-image: radial-gradient(ellipse 120% 60% at 50% 0%, black 40%, transparent 100%);
+  mask-image: radial-gradient(ellipse 120% 60% at 50% 0%, black 40%, transparent 100%);
+  pointer-events: none;
+}
+
+/* ── Typography helpers ────────────────────────────────────────────────────── */
+.font-display {
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+.font-mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ── Section eyebrow ───────────────────────────────────────────────────────── */
+.eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--teal);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.eyebrow::before {
+  content: '';
+  display: block;
+  width: 24px;
+  height: 1px;
+  background: var(--teal-line);
+  flex-shrink: 0;
+}
+
+/* ── Surface cards ─────────────────────────────────────────────────────────── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+}
+
+.card-2 {
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+
+/* ── Buttons ────────────────────────────────────────────────────────────────── */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 28px;
+  background: var(--teal);
+  color: #06080d;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.15s;
+  text-decoration: none;
+}
+
+.btn-primary:hover {
+  opacity: 0.88;
+  transform: translateY(-1px);
+}
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 28px;
+  background: transparent;
+  color: var(--text);
+  font-family: 'Manrope', sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  border-radius: 10px;
+  border: 1px solid var(--line-strong);
+  cursor: pointer;
+  transition: border-color 0.15s, transform 0.15s;
+  text-decoration: none;
+}
+
+.btn-ghost:hover {
+  border-color: var(--teal-line);
+  transform: translateY(-1px);
+}
+
+/* ── Scrollbar ─────────────────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--surface);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--line-strong);
+  border-radius: 3px;
+}
+
+/* ── Ping animation ────────────────────────────────────────────────────────── */
+@keyframes ping-expand {
+  0% { transform: scale(1); opacity: 0.6; }
+  100% { transform: scale(2.5); opacity: 0; }
+}
+
+@keyframes drift {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(8px, -6px); }
+}
+
+@keyframes pulse-ring {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 0.15; }
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-ping-expand {
+  animation: ping-expand 3s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.animate-drift {
+  animation: drift 6s ease-in-out infinite;
+}
+
+.animate-pulse-ring {
+  animation: pulse-ring 3s ease-in-out infinite;
+}
+
+.animate-spin-slow {
+  animation: spin-slow 8s linear infinite;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.4s ease-out forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-ping-expand,
+  .animate-drift,
+  .animate-pulse-ring,
+  .animate-spin-slow,
+  .animate-fade-in-up {
+    animation: none !important;
+  }
+}
+
+/* ── Demo trace layers ─────────────────────────────────────────────────────── */
+.trace-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 99px;
+  font-weight: 500;
+}
+
+.badge-teal {
+  background: var(--teal-soft);
+  color: var(--teal);
+  border: 1px solid var(--teal-line);
+}
+
+.badge-magenta {
+  background: var(--magenta-soft);
+  color: var(--magenta);
+  border: 1px solid rgba(255, 73, 107, 0.3);
+}
+
+.badge-neutral {
+  background: rgba(255,255,255,0.05);
+  color: var(--text-dim);
+  border: 1px solid var(--line);
+}
