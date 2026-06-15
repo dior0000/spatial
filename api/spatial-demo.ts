@@ -1,20 +1,11 @@
-// Vercel serverless function — /api/spatial-demo
-// Behaviour:
-//   - If LLM_API_KEY is set: lightweight real orchestration via Anthropic tool-use
-//   - Otherwise: rich deterministic mock (site must work fully without any keys)
-
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import type { SpatialDemoResponse } from '../src/lib/types';
-import { getMockForQuery } from '../src/lib/mock-demo';
+import type { SpatialDemoResponse } from './_lib/types';
+import { getMockForQuery } from './_lib/mock-demo';
 
-// ---------------------------------------------------------------------------
-// Real orchestration path (Anthropic Messages API + tool use)
-// ---------------------------------------------------------------------------
 async function runRealOrchestration(query: string): Promise<SpatialDemoResponse> {
   const apiKey = process.env['LLM_API_KEY'] ?? '';
-  const model = 'claude-sonnet-4-6'; // latest stable at knowledge cutoff
+  const model = 'claude-sonnet-4-6';
 
-  // Step 1 — ask model to produce a plan (tool use)
   const planResponse = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: {
@@ -49,16 +40,10 @@ async function runRealOrchestration(query: string): Promise<SpatialDemoResponse>
     content: Array<{ type: string; text?: string }>;
   };
   const text = data.content.find((c) => c.type === 'text')?.text ?? '';
-
-  // Extract JSON from potential markdown code block
   const jsonMatch = text.match(/```(?:json)?\s*([\s\S]*?)```/) ?? [null, text];
-  const json = JSON.parse(jsonMatch[1] ?? text) as SpatialDemoResponse;
-  return json;
+  return JSON.parse(jsonMatch[1] ?? text) as SpatialDemoResponse;
 }
 
-// ---------------------------------------------------------------------------
-// Handler
-// ---------------------------------------------------------------------------
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {
     res.status(405).json({ error: 'Method Not Allowed' });
@@ -79,12 +64,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       try {
         result = await runRealOrchestration(query);
       } catch (e) {
-        // Gracefully fall back to mock if real orchestration fails
         console.error('Real orchestration failed, falling back to mock:', e);
         result = getMockForQuery(query);
       }
     } else {
-      // Simulate realistic latency so the trace animation feels real
       await new Promise((r) => setTimeout(r, 900));
       result = getMockForQuery(query);
     }
